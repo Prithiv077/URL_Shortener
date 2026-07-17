@@ -31,50 +31,61 @@ function Register() {
     }
   };
 
-  return (
-    <div className="page">
-      <div className="card">
-        <h1>url-shortener</h1>
-        <p className="subtitle">Create a new account</p>
+ return (
+  <div className="page">
+    <div className="card">
 
-        <form onSubmit={handleRegister}>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-          </div>
+      <h1>Create Account</h1>
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="min 6 characters"
-              required
-            />
-          </div>
+      <p className="subtitle">
+        Start shortening and managing your links in seconds.
+      </p>
 
-          {error   && <p className="error-msg">{error}</p>}
-          {success && <p className="success-msg">{success}</p>}
+      <form onSubmit={handleRegister}>
 
-          <br />
-          <button className="btn btn-primary" type="submit" disabled={loading}>
-            {loading ? "Registering..." : "Register"}
-          </button>
-        </form>
+        <div className="form-group">
+          <label>Email Address</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+          />
+        </div>
 
-        <p className="link-text">
-          Already have an account? <Link to="/login">Login here</Link>
-        </p>
-      </div>
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Minimum 6 characters"
+            required
+          />
+        </div>
+
+        {error && <p className="error-msg">{error}</p>}
+        {success && <p className="success-msg">{success}</p>}
+
+        <button
+          className="btn btn-primary"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? "Creating Account..." : "Register"}
+        </button>
+
+      </form>
+
+      <p className="link-text">
+        Already have an account?{" "}
+        <Link to="/login">Login</Link>
+      </p>
+
     </div>
-  );
+  </div>
+);
 }
 
 export default Register;

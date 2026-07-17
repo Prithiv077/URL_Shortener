@@ -112,220 +112,307 @@ function Dashboard() {
     });
   };
 
-  return (
-    <div className="dashboard-container">
+       return (
+  <div className="dashboard-container">
 
-      {/* NAVBAR */}
-      <div className="navbar">
-        <div className="logo">url-shortener</div>
-        <span>{email}</span>
-        <button className="btn-logout" onClick={handleLogout}>Logout</button>
+    {/* Navbar */}
+    <nav className="navbar">
+      <div className="logo">
+        URL <span>Shortener</span>
       </div>
 
-      {/* SHORTEN FORM */}
-      <div className="shorten-box">
-        <h2>Shorten a URL</h2>
-        <form onSubmit={handleShorten}>
-          <div className="input-row">
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://www.example.com/very-long-url-here"
-              required
-            />
-            <button className="btn btn-primary" type="submit" disabled={loading}
-              style={{ width: "auto" }}>
-              {loading ? "..." : "Shorten"}
-            </button>
-          </div>
+      <div className="nav-right">
+        <span className="user-email">{email}</span>
+        <button className="btn btn-danger" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+    </nav>
 
-          
+    {/* Shortener */}
+    <section className="shorten-box">
+      <h2>Create Short Link</h2>
+      <p className="subtitle">
+        Paste your long URL below and generate a shareable short link instantly.
+      </p>
+
+      <form onSubmit={handleShorten}>
+        <div className="input-row">
+          <input
+            type="url"
+            placeholder="https://example.com/very-long-url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            required
+          />
+
+          <button
+            className="btn btn-primary"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Creating..." : "Shorten"}
+          </button>
+        </div>
+
+        <div className="optional-grid">
+
           <div className="form-group">
-            <label>Custom Alias (optional)</label>
+            <label>Custom Alias</label>
             <input
               type="text"
+              placeholder="my-link"
               value={customAlias}
               onChange={(e) => setCustomAlias(e.target.value)}
-              placeholder="my-custom-link"
             />
           </div>
 
           <div className="form-group">
-
-            <label>Expiry Date (optional)</label>
+            <label>Expiry Date</label>
             <input
               type="datetime-local"
               value={expiresAt}
               onChange={(e) => setExpiresAt(e.target.value)}
             />
           </div>
-        </form>
 
-        {error && <p className="error-msg">{error}</p>}
+        </div>
+      </form>
 
-        {/* RESULT BOX — shown after shortening */}
-        {result && (
-          <div className="result-box">
-            <img src={result.qrCode} alt="QR Code" />
-            <div className="result-info">
-              <div className="short-url">{result.shortUrl}</div>
-              <div className="original-url">→ {result.originalUrl}</div>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button className="btn btn-copy" onClick={() => handleCopy(result.shortUrl)}>
-                  {copied === result.shortUrl ? "Copied!" : "Copy"}
-                </button>
-                <a href={result.shortUrl} target="_blank" rel="noreferrer"
-                  className="btn btn-copy" style={{ textDecoration: "none" }}>
-                  Open
-                </a>
-              </div>
+      {error && <p className="error-msg">{error}</p>}
+
+      {result && (
+        <div className="result-box">
+
+          <img src={result.qrCode} alt="QR Code" />
+
+          <div className="result-info">
+            <h3>Short URL Created 🎉</h3>
+
+            <a
+              href={result.shortUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="short-url"
+            >
+              {result.shortUrl}
+            </a>
+
+            <p className="original-url">
+              {result.originalUrl}
+            </p>
+
+            <div className="result-actions">
+              <button
+                className="btn btn-copy"
+                onClick={() => handleCopy(result.shortUrl)}
+              >
+                {copied === result.shortUrl ? "Copied!" : "Copy"}
+              </button>
+
+              <a
+                href={result.shortUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-primary"
+              >
+                Open
+              </a>
             </div>
           </div>
-        )}
-      </div>
 
-      
-        <div style={{
-          display:"grid",
-          gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",
-          gap:"16px",
-          marginBottom:"24px"
-        }}>
-          <div className="card">
-            <h3>Total Links</h3>
-            <h1>{links.length}</h1>
-          </div>
-
-          <div className="card">
-            <h3>Total Clicks</h3>
-            <h1>{links.reduce((a,b)=>a+b.clicks,0)}</h1>
-          </div>
-
-          <div className="card">
-            <h3>Active Links</h3>
-            <h1>{links.filter(l => !l.expires_at).length}</h1>
-          </div>
-        </div>
-
-        <div style={{
-          display:"flex",
-          gap:"12px",
-          marginBottom:"20px",
-          flexWrap:"wrap"
-        }}>
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e)=>setSearch(e.target.value)}
-            style={{maxWidth:"250px"}}
-          />
-
-          <select
-            value={sortType}
-            onChange={(e)=>setSortType(e.target.value)}
-            style={{
-              padding:"12px",
-              borderRadius:"10px"
-            }}
-          >
-            <option value="latest">Latest</option>
-            <option value="clicks">Most Clicked</option>
-          </select>
-
-          <button className="btn btn-copy" onClick={exportLinks}>
-            Export JSON
-          </button>
-        </div>
-
-
-      {/* LINKS LIST */}
-      <div className="links-section">
-        
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-          <h2>Your Links ({links.length})</h2>
-          <input
-            type="text"
-            placeholder="Search links..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ maxWidth: "220px" }}
-          />
-        </div>
-
-        <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
-          <div className="card" style={{ padding: "16px", maxWidth: "180px" }}>
-            <strong>Total Links</strong>
-            <div>{links.length}</div>
-          </div>
-
-          <div className="card" style={{ padding: "16px", maxWidth: "180px" }}>
-            <strong>Total Clicks</strong>
-            <div>{links.reduce((a, b) => a + b.clicks, 0)}</div>
-          </div>
-        </div>
-
-
-        {links.length === 0 ? (
-          <div className="empty-state">No links yet. Shorten one above!</div>
-        ) : (
-          links
-            .filter((link) =>
-              link.original_url.toLowerCase().includes(search.toLowerCase()) ||
-              link.shortUrl.toLowerCase().includes(search.toLowerCase())
-            )
-            .sort((a,b)=>{
-              if(sortType === "clicks") return b.clicks - a.clicks;
-              return new Date(b.created_at) - new Date(a.created_at);
-            })
-            .map((link) => (
-            <div className="link-item" key={link.id}>
-              <div className="link-left">
-                <div className="short">{link.shortUrl}</div>
-                <div className="original" title={link.original_url}>
-                  {link.original_url}
-                </div>
-                <div className="link-meta">
-                  <span>👁 {link.clicks} clicks</span>
-                  <span>📅 {formatDate(link.created_at)}</span>
-                  {link.expires_at && (
-                    <span>⏳ Expires {formatDate(link.expires_at)}</span>
-                  )}
-                </div>
-              </div>
-              <div className="link-actions">
-                <button className="btn btn-copy" onClick={() => handleCopy(link.shortUrl)}>
-                  {copied === link.shortUrl ? "Copied!" : "Copy"}
-                </button>
-                <button className="btn btn-copy" onClick={() => handleShowQR(link)}>
-                  QR
-                </button>
-                <button className="btn btn-danger" onClick={() => handleDelete(link.id)}>
-                  Del
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* QR MODAL POPUP */}
-      {qrModal && (
-        <div className="modal-overlay" onClick={() => setQrModal(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>QR Code</h3>
-            <img src={qrModal.qrCode} alt="QR" />
-            <p>{qrModal.shortUrl}</p>
-            <button className="btn btn-primary" onClick={() => setQrModal(null)}>
-              Close
-            </button>
-          </div>
         </div>
       )}
+    </section>
 
-    </div>
-  );
+    {/* Dashboard Stats */}
+
+    <section className="stats-grid">
+
+      <div className="stat-card">
+        <h4>Total Links</h4>
+        <h2>{links.length}</h2>
+      </div>
+
+      <div className="stat-card">
+        <h4>Total Clicks</h4>
+        <h2>{links.reduce((a, b) => a + b.clicks, 0)}</h2>
+      </div>
+
+      <div className="stat-card">
+        <h4>Active Links</h4>
+        <h2>{links.filter(link => !link.expires_at).length}</h2>
+      </div>
+
+    </section>
+
+    {/* Search */}
+
+    <section className="toolbar">
+
+      <input
+        className="search-box"
+        type="text"
+        placeholder="Search links..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <select
+        value={sortType}
+        onChange={(e) => setSortType(e.target.value)}
+      >
+        <option value="latest">Latest</option>
+        <option value="clicks">Most Clicked</option>
+      </select>
+
+      <button
+        className="btn btn-copy"
+        onClick={exportLinks}
+      >
+        Export JSON
+      </button>
+
+    </section>
+
+    {/* Links */}
+
+    <section className="links-section">
+
+      <h2>
+        Your Links ({links.length})
+      </h2> 
+
+            {links.length === 0 ? (
+
+        <div className="empty-state">
+          <h3>No links yet 🚀</h3>
+          <p>Create your first shortened URL above.</p>
+        </div>
+
+      ) : (
+
+        links
+          .filter(
+            (link) =>
+              link.original_url
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              link.shortUrl
+                .toLowerCase()
+                .includes(search.toLowerCase())
+          )
+          .sort((a, b) => {
+            if (sortType === "clicks") return b.clicks - a.clicks;
+            return new Date(b.created_at) - new Date(a.created_at);
+          })
+          .map((link) => (
+
+            <div className="link-card" key={link.id}>
+
+              <div className="link-info">
+
+                <a
+                  href={link.shortUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="short-link"
+                >
+                  {link.shortUrl}
+                </a>
+
+                <p className="original-link">
+                  {link.original_url}
+                </p>
+
+                <div className="link-meta">
+
+                  <span>👁 {link.clicks} Clicks</span>
+
+                  <span>
+                    📅 {formatDate(link.created_at)}
+                  </span>
+
+                  {link.expires_at && (
+                    <span>
+                      ⏳ {formatDate(link.expires_at)}
+                    </span>
+                  )}
+
+                </div>
+
+              </div>
+
+              <div className="link-buttons">
+
+                <button
+                  className="btn btn-copy"
+                  onClick={() => handleCopy(link.shortUrl)}
+                >
+                  {copied === link.shortUrl ? "Copied!" : "Copy"}
+                </button>
+
+                <button
+                  className="btn btn-primary"
+                  onClick={() => handleShowQR(link)}
+                >
+                  QR
+                </button>
+
+                <button
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(link.id)}
+                >
+                  Delete
+                </button>
+
+              </div>
+
+            </div>
+
+          ))
+
+      )}
+
+    </section>
+
+    {/* QR Modal */}
+
+    {qrModal && (
+      <div
+        className="modal-overlay"
+        onClick={() => setQrModal(null)}
+      >
+
+        <div
+          className="modal"
+          onClick={(e) => e.stopPropagation()}
+        >
+
+          <h2>QR Code</h2>
+
+          <img
+            src={qrModal.qrCode}
+            alt="QR Code"
+          />
+
+          <p>{qrModal.shortUrl}</p>
+
+          <button
+            className="btn btn-primary"
+            onClick={() => setQrModal(null)}
+          >
+            Close
+          </button>
+
+        </div>
+
+      </div>
+    )}
+
+  </div>
+);
+
 }
 
 export default Dashboard;

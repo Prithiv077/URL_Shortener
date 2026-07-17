@@ -28,48 +28,58 @@ function Login() {
   };
 
   return (
-    <div className="page">
-      <div className="card">
-        <h1>url-shortener</h1>
-        <p className="subtitle">3rd Year Project — Login to continue</p>
+  <div className="page">
+    <div className="card">
 
-        <form onSubmit={handleLogin}>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-          </div>
+      <h1>URL Shortener</h1>
+      <p className="subtitle">
+        Welcome back! Login to manage your shortened links.
+      </p>
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
+      <form onSubmit={handleLogin}>
 
-          {error && <p className="error-msg">{error}</p>}
+        <div className="form-group">
+          <label>Email Address</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+          />
+        </div>
 
-          <br />
-          <button className="btn btn-primary" type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            required
+          />
+        </div>
 
-        <p className="link-text">
-          No account? <Link to="/register">Register here</Link>
-        </p>
-      </div>
+        {error && <p className="error-msg">{error}</p>}
+
+        <button
+          className="btn btn-primary"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? "Signing In..." : "Login"}
+        </button>
+
+      </form>
+
+      <p className="link-text">
+        Don't have an account?{" "}
+        <Link to="/register">Create one</Link>
+      </p>
+
     </div>
-  );
+  </div>
+);
 }
 
 export default Login;
