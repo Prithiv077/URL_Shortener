@@ -1,6 +1,8 @@
 const express = require("express");
 const cors    = require("cors");
 const rateLimit = require("express-rate-limit");
+const { connectRedis } = require("./redis");
+const { connectRabbitMQ } = require("./rabbitMQ");
 require("dotenv").config();
 
 const authRoutes     = require("./routes/auth");
@@ -39,6 +41,20 @@ app.get("/api/health", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+async function startServer() {
+    try {
+        await connectRedis();
+        await connectRabbitMQ();
+
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+
+    } catch (err) {
+        console.error("Startup Error:", err);
+        process.exit(1);
+    }
+}
+
+startServer();

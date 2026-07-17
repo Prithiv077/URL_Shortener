@@ -1,8 +1,8 @@
-const express       = require("express");
-const QRCode        = require("qrcode");
-const jwt           = require("jsonwebtoken");
-const getConnection = require("../db");
-
+const express = require("express");
+const QRCode = require("qrcode");
+const jwt = require("jsonwebtoken");
+const pool = require("../db");
+const encode = require("../base62");
 const router = express.Router();
 
 // ─── AUTH MIDDLEWARE ─────────────────────────────────────────
@@ -23,89 +23,115 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// ─── GENERATE SHORT CODE ──────────────────────────────────────
-const generateShortCode = () => {
-  return Math.random().toString(36).substring(2, 8);
-};
 
 // ─── CREATE SHORT LINK ────────────────────────────────────────
 router.post("/", authenticate, async (req, res) => {
-
   const { originalUrl, expiresAt, customAlias } = req.body;
 
-  if (!originalUrl)
-    return res.status(400).json({ error: "Original URL is required" });
-
-  // Validate URL
-  try {
-    new URL(originalUrl);
-  } catch {
-    return res.status(400).json({ error: "Invalid URL format" });
-  }
-
-  let shortCode = customAlias?.trim() || generateShortCode();
-
-  const shortUrl = `${process.env.BASE_URL}/${shortCode}`;
-
-  const conn = await getConnection();
-
-  try {
-
-    // Prevent duplicate aliases
-    const [existing] = await conn.execute(
-      "SELECT * FROM links WHERE short_code = ?",
-      [shortCode]
-    );
-
-    if (existing.length > 0) {
-      return res.status(400).json({
-        error: "Custom alias already exists"
-      });
-    }
-
-    await conn.execute(
-      `INSERT INTO links
-      (user_id, short_code, original_url, expires_at)
-      VALUES (?, ?, ?, ?)`,
-      [
-        req.userId,
-        shortCode,
-        originalUrl,
-        expiresAt || null
-      ]
-    );
-
-    // Generate QR code
-    const qrCode = await QRCode.toDataURL(shortUrl);
-
-    res.json({
-      shortCode,
-      shortUrl,
-      originalUrl,
-      qrCode
+if (!originalUrl)
+    return res.status(400).json({
+        error: "Original URL is required"
     });
 
-  } catch (err) {
+try {
+    new URL(originalUrl);
+} catch {
+    return res.status(400).json({
+        error: "Invalid URL"
+    });
+}
+
+try {
+
+    let shortCode;
+
+    // ---------- CUSTOM ALIAS ----------
+    if (customAlias && customAlias.trim()) {
+
+        shortCode = customAlias.trim();
+
+        const [existing] = await pool.execute(
+            "SELECT id FROM links WHERE short_code=?",
+            [shortCode]
+        );
+
+        if (existing.length > 0) {
+            return res.status(400).json({
+                error: "Custom alias already exists"
+            });
+        }
+
+        await pool.execute(
+            `INSERT INTO links
+            (user_id, short_code, original_url, expires_at)
+            VALUES (?,?,?,?)`,
+            [
+                req.userId,
+                shortCode,
+                originalUrl,
+                expiresAt || null
+            ]
+        );
+
+    }
+
+    // ---------- AUTO GENERATED ----------
+    else {
+
+        // temporary value
+        const [result] = await pool.execute(
+            `INSERT INTO links
+            (user_id, short_code, original_url, expires_at)
+            VALUES (?,?,?,?)`,
+            [
+                req.userId,
+                null,
+                originalUrl,
+                expiresAt || null
+            ]
+        );
+
+        shortCode = encode(result.insertId);
+
+        await pool.execute(
+            "UPDATE links SET short_code=? WHERE id=?",
+            [
+                shortCode,
+                result.insertId
+            ]
+        );
+
+    }
+
+    const shortUrl =
+        `${process.env.BASE_URL}/${shortCode}`;
+
+    const qrCode =
+        await QRCode.toDataURL(shortUrl);
+
+    res.json({
+        shortCode,
+        shortUrl,
+        originalUrl,
+        qrCode
+    });
+
+}
+catch(err){
 
     console.error(err);
 
     res.status(500).json({
-      error: "Failed to create link"
+        error:"Failed to create link"
     });
 
-  } finally {
-    await conn.end();
-  }
-});
+}
+})
 
 // ─── GET ALL LINKS ────────────────────────────────────────────
 router.get("/", authenticate, async (req, res) => {
-
-  const conn = await getConnection();
-
   try {
-
-    const [links] = await conn.execute(
+    const [links] = await pool.execute(
       `SELECT
         id,
         short_code,
@@ -127,79 +153,63 @@ router.get("/", authenticate, async (req, res) => {
     res.json(result);
 
   } catch (err) {
-
     console.error(err);
 
     res.status(500).json({
-      error: "Failed to fetch links"
+      error: "Failed to fetch links",
     });
-
-  } finally {
-    await conn.end();
   }
 });
 
 // ─── GET QR CODE ──────────────────────────────────────────────
 router.get("/:shortCode/qr", authenticate, async (req, res) => {
-
   const { shortCode } = req.params;
-
   const shortUrl = `${process.env.BASE_URL}/${shortCode}`;
 
   try {
-
     const qrCode = await QRCode.toDataURL(shortUrl);
 
     res.json({ qrCode });
 
   } catch (err) {
-
     console.error(err);
 
     res.status(500).json({
-      error: "Failed to generate QR code"
+      error: "Failed to generate QR code",
     });
   }
 });
 
 // ─── DELETE LINK ──────────────────────────────────────────────
 router.delete("/:id", authenticate, async (req, res) => {
-
   const { id } = req.params;
 
-  const conn = await getConnection();
-
   try {
-
-    const [rows] = await conn.execute(
+    const [rows] = await pool.execute(
       "SELECT * FROM links WHERE id = ? AND user_id = ?",
       [id, req.userId]
     );
 
     if (rows.length === 0)
       return res.status(404).json({
-        error: "Link not found"
+        error: "Link not found",
       });
 
-    await conn.execute(
+    await pool.execute(
       "DELETE FROM links WHERE id = ?",
       [id]
     );
 
     res.json({
-      message: "Link deleted successfully"
+      message: "Link deleted successfully",
     });
 
   } catch (err) {
-
     console.error(err);
 
     res.status(500).json({
-      error: "Failed to delete link"
+      error: "Failed to delete link",
     });
-
-  } finally {
-    await conn.end();
   }
 });
 
