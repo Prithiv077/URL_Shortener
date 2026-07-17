@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// Change baseURL to your EC2 public IP when deploying to AWS
-// e.g. "http://13.233.xx.xx:5000/api"
+
 const API = axios.create({
   baseURL: "https://107.21.170.243:5000/api",
 });
