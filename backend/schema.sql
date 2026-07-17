@@ -1,10 +1,9 @@
--- Run this in MySQL Workbench before starting the backend
--- OR via CLI: mysql -u admin -p < schema.sql
+
 
 CREATE DATABASE IF NOT EXISTS urlshortener;
 USE urlshortener;
 
--- Stores registered users
+
 CREATE TABLE IF NOT EXISTS users (
   id         INT AUTO_INCREMENT PRIMARY KEY,
   email      VARCHAR(255) UNIQUE NOT NULL,
@@ -12,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Stores all shortened URLs
+
 CREATE TABLE IF NOT EXISTS links (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   user_id      INT NOT NULL,
@@ -22,5 +21,5 @@ CREATE TABLE IF NOT EXISTS links (
   expires_at   DATETIME DEFAULT NULL,        -- optional expiry
   created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-  -- ON DELETE CASCADE: deleting a user also deletes all their links
+
 );
