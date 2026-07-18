@@ -1,221 +1,318 @@
-/* ---------- GLOBAL ---------- */
+/* ======================================================
+   GOOGLE FONT
+====================================================== */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* ======================================================
+   RESET
+====================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-body {
-  font-family: "Inter", sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e293b, #111827);
-  min-height: 100vh;
-  color: white;
+html{
+    scroll-behavior:smooth;
 }
 
-/* ---------- PAGE ---------- */
+body{
 
-.page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 24px;
+    font-family:"Inter",sans-serif;
+
+    background:
+    radial-gradient(circle at top left,#2563eb22,transparent 40%),
+    radial-gradient(circle at bottom right,#0ea5e922,transparent 40%),
+    #0f172a;
+
+    color:#f8fafc;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
 }
 
-/* ---------- CARD ---------- */
+/* ======================================================
+   PAGE
+====================================================== */
 
-.card {
-  width: 100%;
-  max-width: 430px;
+.page{
 
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(18px);
+    min-height:100vh;
 
-  border: 1px solid rgba(255,255,255,0.12);
+    display:flex;
 
-  border-radius: 24px;
+    justify-content:center;
 
-  padding: 40px;
+    align-items:center;
 
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.35);
+    padding:40px;
+}
 
-  transition: .3s ease;
+/* ======================================================
+   CARD
+====================================================== */
+
+.card{
+
+    width:100%;
+
+    max-width:460px;
+
+    background:rgba(30,41,59,.92);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:28px;
+
+    padding:42px;
+
+    backdrop-filter:blur(24px);
+
+    box-shadow:
+    0 25px 60px rgba(0,0,0,.35);
+
+    transition:.35s;
 }
 
 .card:hover{
-  transform: translateY(-5px);
+
+    transform:translateY(-8px);
+
+    box-shadow:
+    0 35px 70px rgba(0,0,0,.45);
 }
 
-/* ---------- TITLE ---------- */
+/* ======================================================
+   LOGO
+====================================================== */
 
 .card h1{
-  text-align:center;
-  font-size:34px;
-  color:#60a5fa;
-  margin-bottom:8px;
+
+    text-align:center;
+
+    font-size:38px;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+    color:white;
+}
+
+.card h1 span{
+
+    color:#3b82f6;
 }
 
 .subtitle{
-  text-align:center;
-  color:#cbd5e1;
-  margin-bottom:32px;
-  font-size:15px;
+
+    text-align:center;
+
+    color:#94a3b8;
+
+    font-size:15px;
+
+    margin-bottom:36px;
+
+    line-height:1.6;
 }
 
-/* ---------- FORM ---------- */
+/* ======================================================
+   FORM
+====================================================== */
 
 .form-group{
-  margin-bottom:20px;
+
+    margin-bottom:22px;
 }
 
 .form-group label{
-  display:block;
-  margin-bottom:8px;
-  color:#e2e8f0;
-  font-weight:600;
+
+    display:block;
+
+    margin-bottom:9px;
+
+    font-size:14px;
+
+    color:#cbd5e1;
+
+    font-weight:600;
 }
 
 .form-group input{
 
-  width:100%;
+    width:100%;
 
-  padding:14px 16px;
+    padding:15px 18px;
 
-  border-radius:12px;
+    border-radius:14px;
 
-  border:1px solid rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.08);
 
-  background:#1e293b;
+    background:#111827;
 
-  color:white;
+    color:white;
 
-  font-size:15px;
+    font-size:15px;
 
-  outline:none;
-
-  transition:.25s;
+    transition:.3s;
 }
 
 .form-group input::placeholder{
-  color:#94a3b8;
+
+    color:#64748b;
 }
 
 .form-group input:focus{
 
-  border-color:#3b82f6;
+    outline:none;
 
-  box-shadow:0 0 0 4px rgba(59,130,246,.15);
+    border-color:#3b82f6;
+
+    background:#172033;
+
+    box-shadow:
+    0 0 0 4px rgba(59,130,246,.18);
 }
 
-/* ---------- BUTTON ---------- */
+/* ======================================================
+   BUTTON
+====================================================== */
 
 .btn{
 
-  width:100%;
+    width:100%;
 
-  border:none;
+    padding:15px;
 
-  border-radius:12px;
+    border:none;
 
-  padding:14px;
+    border-radius:14px;
 
-  cursor:pointer;
+    cursor:pointer;
 
-  font-size:15px;
+    font-size:15px;
 
-  font-weight:600;
+    font-weight:600;
 
-  transition:.25s;
+    transition:.3s;
 }
 
 .btn-primary{
 
-  background:#2563eb;
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
 
-  color:white;
+    color:white;
+
+    box-shadow:
+    0 12px 30px rgba(37,99,235,.35);
 }
 
 .btn-primary:hover{
 
-  background:#1d4ed8;
+    transform:translateY(-3px);
 
-  transform:translateY(-2px);
+    box-shadow:
+    0 18px 40px rgba(37,99,235,.45);
 }
 
 .btn-primary:disabled{
 
-  opacity:.7;
+    opacity:.65;
 
-  cursor:not-allowed;
+    cursor:not-allowed;
 
-  transform:none;
+    transform:none;
 }
 
-/* ---------- LINK ---------- */
+/* ======================================================
+   LINK
+====================================================== */
 
 .link-text{
 
-  margin-top:24px;
+    margin-top:28px;
 
-  text-align:center;
+    text-align:center;
 
-  color:#cbd5e1;
+    color:#94a3b8;
 
-  font-size:15px;
+    font-size:15px;
 }
 
 .link-text a{
 
-  color:#60a5fa;
+    color:#60a5fa;
 
-  text-decoration:none;
+    text-decoration:none;
 
-  font-weight:600;
+    font-weight:600;
 }
 
 .link-text a:hover{
 
-  text-decoration:underline;
+    text-decoration:underline;
 }
 
-/* ---------- MESSAGE ---------- */
+/* ======================================================
+   ALERTS
+====================================================== */
 
 .error-msg{
 
-  color:#f87171;
+    margin-top:18px;
 
-  margin-top:8px;
+    text-align:center;
 
-  text-align:center;
+    color:#ef4444;
 
-  font-size:14px;
+    font-weight:600;
 }
 
 .success-msg{
 
-  color:#34d399;
+    margin-top:18px;
 
-  margin-top:8px;
+    text-align:center;
 
-  text-align:center;
+    color:#10b981;
 
-  font-size:14px;
+    font-weight:600;
 }
 
-/* ---------- MOBILE ---------- */
+/* ======================================================
+   MOBILE
+====================================================== */
 
-@media(max-width:500px){
+@media(max-width:600px){
 
-  .card{
+.page{
 
-    padding:28px;
-  }
+padding:18px;
 
-  .card h1{
+}
 
-    font-size:28px;
-  }
+.card{
+
+padding:28px;
+
+border-radius:22px;
+
+}
+
+.card h1{
+
+font-size:30px;
+
+}
+
+.subtitle{
+
+font-size:14px;
+
+}
 
 }

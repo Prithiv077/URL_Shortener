@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FiLink,
+  FiCopy,
+  FiTrash2,
+  FiSearch,
+  FiLogOut,
+  FiBarChart2,
+  FiCalendar,
+  FiDownload,
+  FiExternalLink,
+  FiGrid
+} from "react-icons/fi";
+
 import API from "../api";
 import "../Dashboard.css";
 
@@ -162,7 +175,7 @@ function Dashboard() {
             <label>Custom Alias</label>
             <input
               type="text"
-              placeholder="my-link"
+              placeholder="optional"
               value={customAlias}
               onChange={(e) => setCustomAlias(e.target.value)}
             />
